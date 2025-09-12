@@ -636,10 +636,11 @@
             height: 40px;
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: flex-start;
+            gap: 8px;
             font-weight: 600;
             color: var(--primary);
-            padding-right: 16px;
+            padding-left: 16px;
             font-size: 15px;
             border-bottom: 1px solid var(--border);
         }
@@ -689,7 +690,7 @@
             transform: translateY(-50%);
             font-size: 12px;
             font-weight: 700; /* Negrita */
-            color: white;
+            color: #111;      /* Color negro */
             text-shadow: 0 0 2px rgba(0,0,0,0.5);
             z-index: 5;
         }
@@ -843,6 +844,103 @@
         }
         .page.active {
             animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* --- NUEVO ESTILO PARA LA TABLA DE CONTROL DE AVANCE --- */
+        .control-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+            font-size: 15px;
+        }
+        .control-table th,
+        .control-table td {
+            padding: 16px 12px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        .control-table thead th {
+            background-color: var(--primary-light);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+        .control-table tbody tr {
+            border-bottom: 1px solid var(--border);
+        }
+        .control-table tbody tr:last-child {
+            border-bottom: none;
+        }
+        .control-table tbody tr:hover {
+            background-color: rgba(44, 90, 160, 0.03);
+        }
+        .concept-cell {
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .concept-cell i {
+            color: var(--primary-light);
+            font-size: 18px;
+        }
+        .date-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .date-cell input {
+            width: 130px;
+            padding: 10px;
+            font-size: 14px;
+        }
+        .status-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .status-input {
+            width: 70px;
+            padding: 10px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary);
+            border: 2px solid var(--border);
+            border-radius: 6px;
+        }
+        .status-bar {
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .status-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        .comment-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .comment-textarea {
+            width: 100%;
+            min-height: 60px;
+            padding: 10px;
+            font-size: 14px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            resize: vertical;
+        }
+        .comment-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-style: italic;
         }
     </style>
 </head>
@@ -1137,6 +1235,7 @@
                             <h3 style="margin-bottom: 24px; color: var(--primary); display: flex; align-items: center; gap: 10px;">
                                 <i class="fas fa-chart-bar"></i> Control de Avance
                             </h3>
+                            <!-- Formulario superior -->
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label for="control-project-name"><i class="fas fa-project-diagram"></i> Nombre del Proyecto</label>
@@ -1147,83 +1246,125 @@
                                     <input type="date" id="control-start-date" onchange="updateGanttChart()">
                                 </div>
                             </div>
-                            <div class="progress-grid">
-                                <div class="progress-item">
-                                    <div class="progress-header">
-                                        <div class="progress-title"><i class="fas fa-landmark"></i> Terreno</div>
-                                        <input type="number" id="terreno-progress" min="0" max="100" value="0" oninput="updateProgress('terreno', this.value)" placeholder="0">
-                                    </div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" id="terreno-progress-bar" style="width: 0%;"></div>
-                                    </div>
-                                    <div class="progress-value">
-                                        <div style="display: flex; justify-content: space-between; gap: 8px; margin-top: 8px;">
-                                            <input type="date" id="terreno-start" placeholder="Inicio" onchange="updateGanttChart()" style="flex: 1; padding: 10px; font-size: 14px;">
-                                            <input type="date" id="terreno-end" placeholder="Término" onchange="updateGanttChart()" style="flex: 1; padding: 10px; font-size: 14px;">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="progress-item">
-                                    <div class="progress-header">
-                                        <div class="progress-title"><i class="fas fa-plug"></i> Conexión</div>
-                                        <input type="number" id="conexion-progress" min="0" max="100" value="0" oninput="updateProgress('conexion', this.value)" placeholder="0">
-                                    </div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" id="conexion-progress-bar" style="width: 0%;"></div>
-                                    </div>
-                                    <div class="progress-value">
-                                        <div style="display: flex; justify-content: space-between; gap: 8px; margin-top: 8px;">
-                                            <input type="date" id="conexion-start" placeholder="Inicio" onchange="updateGanttChart()" style="flex: 1; padding: 10px; font-size: 14px;">
-                                            <input type="date" id="conexion-end" placeholder="Término" onchange="updateGanttChart()" style="flex: 1; padding: 10px; font-size: 14px;">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="progress-item">
-                                    <div class="progress-header">
-                                        <div class="progress-title"><i class="fas fa-route"></i> Línea</div>
-                                        <input type="number" id="linea-progress" min="0" max="100" value="0" oninput="updateProgress('linea', this.value)" placeholder="0">
-                                    </div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" id="linea-progress-bar" style="width: 0%;"></div>
-                                    </div>
-                                    <div class="progress-value">
-                                        <div style="display: flex; justify-content: space-between; gap: 8px; margin-top: 8px;">
-                                            <input type="date" id="linea-start" placeholder="Inicio" onchange="updateGanttChart()" style="flex: 1; padding: 10px; font-size: 14px;">
-                                            <input type="date" id="linea-end" placeholder="Término" onchange="updateGanttChart()" style="flex: 1; padding: 10px; font-size: 14px;">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="progress-item">
-                                    <div class="progress-header">
-                                        <div class="progress-title"><i class="fas fa-tree"></i> Permiso Ambiental</div>
-                                        <input type="number" id="permiso-progress" min="0" max="100" value="0" oninput="updateProgress('permiso', this.value)" placeholder="0">
-                                    </div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" id="permiso-progress-bar" style="width: 0%;"></div>
-                                    </div>
-                                    <div class="progress-value">
-                                        <div style="display: flex; justify-content: space-between; gap: 8px; margin-top: 8px;">
-                                            <input type="date" id="permiso-start" placeholder="Inicio" onchange="updateGanttChart()" style="flex: 1; padding: 10px; font-size: 14px;">
-                                            <input type="date" id="permiso-end" placeholder="Término" onchange="updateGanttChart()" style="flex: 1; padding: 10px; font-size: 14px;">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="progress-item">
-                                    <div class="progress-header">
-                                        <div class="progress-title"><i class="fas fa-users"></i> Comunidades</div>
-                                        <input type="number" id="comunidades-progress" min="0" max="100" value="0" oninput="updateProgress('comunidades', this.value)" placeholder="0">
-                                    </div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" id="comunidades-progress-bar" style="width: 0%;"></div>
-                                    </div>
-                                    <div class="progress-value">
-                                        <div style="display: flex; justify-content: space-between; gap: 8px; margin-top: 8px;">
-                                            <input type="date" id="comunidades-start" placeholder="Inicio" onchange="updateGanttChart()" style="flex: 1; padding: 10px; font-size: 14px;">
-                                            <input type="date" id="comunidades-end" placeholder="Término" onchange="updateGanttChart()" style="flex: 1; padding: 10px; font-size: 14px;">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <!-- Tabla de Control de Avance -->
+                            <table class="control-table">
+                                <thead>
+                                    <tr>
+                                        <th>Concepto</th>
+                                        <th>Fechas</th>
+                                        <th>Estado</th>
+                                        <th>Comentarios</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Fila para Terreno -->
+                                    <tr>
+                                        <td class="concept-cell">
+                                            <i class="fas fa-landmark"></i>
+                                            Terreno
+                                        </td>
+                                        <td class="date-cell">
+                                            <input type="date" id="terreno-start" placeholder="Inicio" onchange="updateGanttChart()" />
+                                            <input type="date" id="terreno-end" placeholder="Término" onchange="updateGanttChart()" />
+                                        </td>
+                                        <td class="status-cell">
+                                            <input type="number" id="terreno-progress" min="0" max="100" value="0" oninput="updateProgress('terreno', this.value)" class="status-input" placeholder="0" />
+                                            <div class="status-bar">
+                                                <div class="status-fill" id="terreno-progress-bar" style="width: 0%;"></div>
+                                            </div>
+                                        </td>
+                                        <td class="comment-cell">
+                                            <textarea id="terreno-comment" class="comment-textarea" placeholder="Agrega un comentario..." oninput="updateCommentDate('terreno')"></textarea>
+                                            <div class="comment-date" id="terreno-comment-date"></div>
+                                        </td>
+                                    </tr>
+                                    <!-- Fila para Conexión -->
+                                    <tr>
+                                        <td class="concept-cell">
+                                            <i class="fas fa-plug"></i>
+                                            Conexión
+                                        </td>
+                                        <td class="date-cell">
+                                            <input type="date" id="conexion-start" placeholder="Inicio" onchange="updateGanttChart()" />
+                                            <input type="date" id="conexion-end" placeholder="Término" onchange="updateGanttChart()" />
+                                        </td>
+                                        <td class="status-cell">
+                                            <input type="number" id="conexion-progress" min="0" max="100" value="0" oninput="updateProgress('conexion', this.value)" class="status-input" placeholder="0" />
+                                            <div class="status-bar">
+                                                <div class="status-fill" id="conexion-progress-bar" style="width: 0%;"></div>
+                                            </div>
+                                        </td>
+                                        <td class="comment-cell">
+                                            <textarea id="conexion-comment" class="comment-textarea" placeholder="Agrega un comentario..." oninput="updateCommentDate('conexion')"></textarea>
+                                            <div class="comment-date" id="conexion-comment-date"></div>
+                                        </td>
+                                    </tr>
+                                    <!-- Fila para Línea -->
+                                    <tr>
+                                        <td class="concept-cell">
+                                            <i class="fas fa-route"></i>
+                                            Línea
+                                        </td>
+                                        <td class="date-cell">
+                                            <input type="date" id="linea-start" placeholder="Inicio" onchange="updateGanttChart()" />
+                                            <input type="date" id="linea-end" placeholder="Término" onchange="updateGanttChart()" />
+                                        </td>
+                                        <td class="status-cell">
+                                            <input type="number" id="linea-progress" min="0" max="100" value="0" oninput="updateProgress('linea', this.value)" class="status-input" placeholder="0" />
+                                            <div class="status-bar">
+                                                <div class="status-fill" id="linea-progress-bar" style="width: 0%;"></div>
+                                            </div>
+                                        </td>
+                                        <td class="comment-cell">
+                                            <textarea id="linea-comment" class="comment-textarea" placeholder="Agrega un comentario..." oninput="updateCommentDate('linea')"></textarea>
+                                            <div class="comment-date" id="linea-comment-date"></div>
+                                        </td>
+                                    </tr>
+                                    <!-- Fila para Permiso Ambiental -->
+                                    <tr>
+                                        <td class="concept-cell">
+                                            <i class="fas fa-tree"></i>
+                                            Permiso Ambiental
+                                        </td>
+                                        <td class="date-cell">
+                                            <input type="date" id="permiso-start" placeholder="Inicio" onchange="updateGanttChart()" />
+                                            <input type="date" id="permiso-end" placeholder="Término" onchange="updateGanttChart()" />
+                                        </td>
+                                        <td class="status-cell">
+                                            <input type="number" id="permiso-progress" min="0" max="100" value="0" oninput="updateProgress('permiso', this.value)" class="status-input" placeholder="0" />
+                                            <div class="status-bar">
+                                                <div class="status-fill" id="permiso-progress-bar" style="width: 0%;"></div>
+                                            </div>
+                                        </td>
+                                        <td class="comment-cell">
+                                            <textarea id="permiso-comment" class="comment-textarea" placeholder="Agrega un comentario..." oninput="updateCommentDate('permiso')"></textarea>
+                                            <div class="comment-date" id="permiso-comment-date"></div>
+                                        </td>
+                                    </tr>
+                                    <!-- Fila para Comunidades -->
+                                    <tr>
+                                        <td class="concept-cell">
+                                            <i class="fas fa-users"></i>
+                                            Comunidades
+                                        </td>
+                                        <td class="date-cell">
+                                            <input type="date" id="comunidades-start" placeholder="Inicio" onchange="updateGanttChart()" />
+                                            <input type="date" id="comunidades-end" placeholder="Término" onchange="updateGanttChart()" />
+                                        </td>
+                                        <td class="status-cell">
+                                            <input type="number" id="comunidades-progress" min="0" max="100" value="0" oninput="updateProgress('comunidades', this.value)" class="status-input" placeholder="0" />
+                                            <div class="status-bar">
+                                                <div class="status-fill" id="comunidades-progress-bar" style="width: 0%;"></div>
+                                            </div>
+                                        </td>
+                                        <td class="comment-cell">
+                                            <textarea id="comunidades-comment" class="comment-textarea" placeholder="Agrega un comentario..." oninput="updateCommentDate('comunidades')"></textarea>
+                                            <div class="comment-date" id="comunidades-comment-date"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!-- Gráfico de Gantt -->
                             <div class="gantt-container">
                                 <h4><i class="fas fa-chart-gantt"></i> Cronograma - Diagrama de Gantt</h4>
                                 <div class="gantt-wrapper">
@@ -1231,6 +1372,7 @@
                                     <div class="gantt-chart" id="gantt-chart"></div>
                                 </div>
                             </div>
+                            <!-- Botones de Acción -->
                             <div class="buttons">
                                 <button class="btn btn-success" onclick="saveControlProject()">
                                     <i class="fas fa-save"></i> Guardar Proyecto
@@ -1281,18 +1423,28 @@
         let cashflowChart = null;
         function showPage(pageId) {
             try {
+                // 1. Ocultar todas las páginas
                 document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+                
+                // 2. Mostrar la página solicitada
                 const page = document.getElementById(pageId);
                 if (!page) throw new Error(`Page ${pageId} not found`);
                 page.classList.add('active');
+                
+                // 3. Scroll al top
                 window.scrollTo(0, 0);
-                // Highlight active nav link
+                
+                // 4. Actualizar el enlace activo en la navegación
                 document.querySelectorAll('nav a').forEach(link => {
                     link.classList.remove('active');
-                    if (link.getAttribute('onclick').includes(pageId)) {
+                    // Extraemos el ID de la página del onclick
+                    const onclickAttr = link.getAttribute('onclick');
+                    if (onclickAttr && onclickAttr.includes(pageId)) {
                         link.classList.add('active');
                     }
                 });
+                
+                // 5. Acciones específicas por página
                 if (pageId === 'evaluacion') {
                     loadEvalProjects();
                     document.getElementById('eval-form')?.reset();
@@ -1305,11 +1457,15 @@
                     loadControlProjects();
                     document.getElementById('control-project-name').value = '';
                     document.getElementById('control-start-date').value = '';
-                    document.querySelectorAll('.progress-item input[type="number"]').forEach(input => input.value = '0');
-                    document.querySelectorAll('.progress-item input[type="date"]').forEach(input => input.value = '');
-                    document.querySelectorAll('.progress-fill').forEach(bar => bar.style.width = '0%');
+                    document.querySelectorAll('.status-input').forEach(input => input.value = '0');
+                    document.querySelectorAll('.status-fill').forEach(bar => bar.style.width = '0%');
+                    // Resetear comentarios
+                    document.querySelectorAll('.comment-textarea').forEach(textarea => textarea.value = '');
+                    document.querySelectorAll('.comment-date').forEach(span => span.textContent = '');
                     updateGanttChart();
                 }
+                // No se requiere acción especial para 'inicio', 'servicios', 'proyectos', 'contacto'
+                
             } catch (e) {
                 console.error('Error in showPage:', e);
                 alert('Error al cambiar de página');
@@ -1646,25 +1802,22 @@
                 if (selectedLi) selectedLi.classList.add('active');
                 document.getElementById('control-project-name').value = project.name || '';
                 document.getElementById('control-start-date').value = project.startDate || '';
-                document.getElementById('terreno-progress').value = project.terreno?.progress || '0';
-                document.getElementById('terreno-start').value = project.terreno?.start || '';
-                document.getElementById('terreno-end').value = project.terreno?.end || '';
-                document.getElementById('conexion-progress').value = project.conexion?.progress || '0';
-                document.getElementById('conexion-start').value = project.conexion?.start || '';
-                document.getElementById('conexion-end').value = project.conexion?.end || '';
-                document.getElementById('linea-progress').value = project.linea?.progress || '0';
-                document.getElementById('linea-start').value = project.linea?.start || '';
-                document.getElementById('linea-end').value = project.linea?.end || '';
-                document.getElementById('permiso-progress').value = project.permiso?.progress || '0';
-                document.getElementById('permiso-start').value = project.permiso?.start || '';
-                document.getElementById('permiso-end').value = project.permiso?.end || '';
-                document.getElementById('comunidades-progress').value = project.comunidades?.progress || '0';
-                document.getElementById('comunidades-start').value = project.comunidades?.start || '';
-                document.getElementById('comunidades-end').value = project.comunidades?.end || '';
-                document.querySelectorAll('.progress-fill').forEach(bar => {
-                    const id = bar.id.replace('-progress-bar', '');
-                    const value = document.getElementById(`${id}-progress`).value;
-                    bar.style.width = `${value || 0}%`;
+                // Cargar datos de cada hito
+                const milestones = ['terreno', 'conexion', 'linea', 'permiso', 'comunidades'];
+                milestones.forEach(milestone => {
+                    const progress = project[milestone]?.progress || '0';
+                    const start = project[milestone]?.start || '';
+                    const end = project[milestone]?.end || '';
+                    const comment = project[milestone]?.comment || '';
+                    const commentDate = project[milestone]?.commentDate || '';
+                    document.getElementById(`${milestone}-progress`).value = progress;
+                    document.getElementById(`${milestone}-start`).value = start;
+                    document.getElementById(`${milestone}-end`).value = end;
+                    document.getElementById(`${milestone}-comment`).value = comment;
+                    document.getElementById(`${milestone}-comment-date`).textContent = commentDate;
+                    // Actualizar barra de progreso
+                    const progressBar = document.getElementById(`${milestone}-progress-bar`);
+                    if (progressBar) progressBar.style.width = `${progress || 0}%`;
                 });
                 updateGanttChart();
             } catch (e) {
@@ -1712,6 +1865,27 @@
                 updateGanttChart();
             } catch (e) {
                 console.error('Error updating progress:', e);
+            }
+        }
+        function updateCommentDate(area) {
+            try {
+                const commentTextarea = document.getElementById(`${area}-comment`);
+                const commentDateSpan = document.getElementById(`${area}-comment-date`);
+                if (commentTextarea.value.trim() !== '') {
+                    const now = new Date();
+                    const formattedDate = now.toLocaleString('es-ES', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    commentDateSpan.textContent = `Última modificación: ${formattedDate}`;
+                } else {
+                    commentDateSpan.textContent = '';
+                }
+            } catch (e) {
+                console.error('Error updating comment date:', e);
             }
         }
         function updateGanttChart() {
@@ -1802,19 +1976,22 @@
                     taskElement.style.left = `${daysFromStart * dayWidth}px`;
                     taskElement.style.width = `${taskDuration * dayWidth}px`;
                     taskElement.style.top = `${index * 40 + 10}px`;
-                    // --- MEJORA 1: Tooltip Enriquecido ---
+                    // Tooltip Enriquecido
                     const durationDays = Math.ceil((task.end - task.start) / (1000 * 60 * 60 * 24));
-                    taskElement.title = `${task.name}\nInicio: ${task.start.toLocaleDateString('es-ES')}\nTérmino: ${task.end.toLocaleDateString('es-ES')}\nDuración: ${durationDays} días\nProgreso: ${task.progress}%`;
-                    // --- MEJORA 6: Interactividad de Selección ---
+                    taskElement.title = `${task.name}
+Inicio: ${task.start.toLocaleDateString('es-ES')}
+Término: ${task.end.toLocaleDateString('es-ES')}
+Duración: ${durationDays} días
+Progreso: ${task.progress}%`;
+                    // Interactividad de Selección
                     taskElement.onclick = () => {
                         document.querySelectorAll('.gantt-item').forEach(item => item.classList.remove('active'));
                         taskElement.classList.add('active');
                     };
-                    // --- MEJORA 2 & 3: Barra de progreso con etiqueta en negrita y color azul ---
+                    // Barra de progreso con etiqueta en negrita
                     const progressElement = document.createElement('div');
                     progressElement.className = 'gantt-progress';
                     progressElement.style.width = `${(task.progress / 100) * taskDuration * dayWidth}px`;
-                    // Etiqueta de porcentaje en negrita
                     const progressLabel = document.createElement('span');
                     progressLabel.className = 'gantt-progress-label';
                     progressLabel.textContent = `${Math.round(task.progress)}%`;
@@ -1822,7 +1999,7 @@
                     taskElement.appendChild(progressElement);
                     ganttChart.appendChild(taskElement);
                 });
-                // --- MEJORA 5: Escala de Tiempo Adaptativa ---
+                // Escala de Tiempo Adaptativa
                 let step = 30;
                 if (totalDays < 60) step = 7;
                 else if (totalDays < 120) step = 14;
@@ -1847,11 +2024,10 @@
                     dateLabel.style.whiteSpace = 'nowrap';
                     const currentDate = new Date(startDateAdjusted);
                     currentDate.setDate(startDateAdjusted.getDate() + i);
-                    // --- MEJORA 4: Formato "mar 25" ---
                     dateLabel.textContent = currentDate.toLocaleDateString('es-ES', { month: 'short', year: '2-digit' }).replace('.', '');
                     ganttChart.appendChild(dateLabel);
                 }
-                // --- Línea de Tiempo "Hoy" ---
+                // Línea de Tiempo "Hoy"
                 const today = new Date();
                 if (today >= startDateAdjusted && today <= endDateAdjusted) {
                     const daysFromStartToday = Math.ceil((today - startDateAdjusted) / (1000 * 60 * 60 * 24));
@@ -1884,11 +2060,11 @@
                     id: Date.now(),
                     name: `Nuevo Proyecto ${list.children.length + 1}`,
                     startDate: '',
-                    terreno: { progress: '0', start: '', end: '' },
-                    conexion: { progress: '0', start: '', end: '' },
-                    linea: { progress: '0', start: '', end: '' },
-                    permiso: { progress: '0', start: '', end: '' },
-                    comunidades: { progress: '0', start: '', end: '' }
+                    terreno: { progress: '0', start: '', end: '', comment: '', commentDate: '' },
+                    conexion: { progress: '0', start: '', end: '', comment: '', commentDate: '' },
+                    linea: { progress: '0', start: '', end: '', comment: '', commentDate: '' },
+                    permiso: { progress: '0', start: '', end: '', comment: '', commentDate: '' },
+                    comunidades: { progress: '0', start: '', end: '', comment: '', commentDate: '' }
                 };
                 const projects = JSON.parse(safeStorage.getItem('controlProjects') || '[]');
                 projects.push(newProject);
@@ -1923,27 +2099,37 @@
                     terreno: {
                         progress: document.getElementById('terreno-progress').value,
                         start: document.getElementById('terreno-start').value,
-                        end: document.getElementById('terreno-end').value
+                        end: document.getElementById('terreno-end').value,
+                        comment: document.getElementById('terreno-comment').value,
+                        commentDate: document.getElementById('terreno-comment-date').textContent.replace('Última modificación: ', '')
                     },
                     conexion: {
                         progress: document.getElementById('conexion-progress').value,
                         start: document.getElementById('conexion-start').value,
-                        end: document.getElementById('conexion-end').value
+                        end: document.getElementById('conexion-end').value,
+                        comment: document.getElementById('conexion-comment').value,
+                        commentDate: document.getElementById('conexion-comment-date').textContent.replace('Última modificación: ', '')
                     },
                     linea: {
                         progress: document.getElementById('linea-progress').value,
                         start: document.getElementById('linea-start').value,
-                        end: document.getElementById('linea-end').value
+                        end: document.getElementById('linea-end').value,
+                        comment: document.getElementById('linea-comment').value,
+                        commentDate: document.getElementById('linea-comment-date').textContent.replace('Última modificación: ', '')
                     },
                     permiso: {
                         progress: document.getElementById('permiso-progress').value,
                         start: document.getElementById('permiso-start').value,
-                        end: document.getElementById('permiso-end').value
+                        end: document.getElementById('permiso-end').value,
+                        comment: document.getElementById('permiso-comment').value,
+                        commentDate: document.getElementById('permiso-comment-date').textContent.replace('Última modificación: ', '')
                     },
                     comunidades: {
                         progress: document.getElementById('comunidades-progress').value,
                         start: document.getElementById('comunidades-start').value,
-                        end: document.getElementById('comunidades-end').value
+                        end: document.getElementById('comunidades-end').value,
+                        comment: document.getElementById('comunidades-comment').value,
+                        commentDate: document.getElementById('comunidades-comment-date').textContent.replace('Última modificación: ', '')
                     }
                 };
                 const index = projects.findIndex(p => p.id === currentControlProject);
@@ -2002,9 +2188,10 @@
                 }, 3000);
                 document.getElementById('control-project-name').value = '';
                 document.getElementById('control-start-date').value = '';
-                document.querySelectorAll('.progress-item input[type="number"]').forEach(input => input.value = '0');
-                document.querySelectorAll('.progress-item input[type="date"]').forEach(input => input.value = '');
-                document.querySelectorAll('.progress-fill').forEach(bar => bar.style.width = '0%');
+                document.querySelectorAll('.status-input').forEach(input => input.value = '0');
+                document.querySelectorAll('.status-fill').forEach(bar => bar.style.width = '0%');
+                document.querySelectorAll('.comment-textarea').forEach(textarea => textarea.value = '');
+                document.querySelectorAll('.comment-date').forEach(span => span.textContent = '');
                 currentControlProject = null;
                 updateGanttChart();
             } catch (e) {
@@ -2030,8 +2217,10 @@
             document.addEventListener('DOMContentLoaded', () => {
                 const today = new Date().toISOString().split('T')[0];
                 document.getElementById('control-start-date').value = today;
+                // Cargar proyectos guardados
                 loadEvalProjects();
                 loadControlProjects();
+                // Actualizar el gráfico de Gantt (por si hay datos cargados)
                 updateGanttChart();
             });
             window.addEventListener('resize', () => {
