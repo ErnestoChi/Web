@@ -40,6 +40,7 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            padding-top: 80px;
         }
         main {
             flex: 1;
@@ -50,14 +51,20 @@
             margin: 0 auto;
             padding: 0 24px;
         }
+        .container-full {
+            width: 100%;
+            padding: 0 24px;
+        }
         /* Header Moderno */
         header {
             background: linear-gradient(135deg, var(--primary) 0%, #122a44 100%);
             color: white;
             padding: 16px 0;
             box-shadow: var(--shadow-sm);
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             z-index: 1000;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -120,7 +127,7 @@
         /* Páginas y Contenedores */
         .page {
             display: none;
-            padding: 32px 0;
+            padding: 2px 0;
         }
         .page.active {
             display: block;
@@ -266,9 +273,110 @@
             font-weight: 500;
             font-size: 15px;
             transition: var(--transition);
-            margin: 0 24px 24px;
-            border: none;
-            cursor: pointer;
+        }
+        /* Tabla de evaluación */
+        .evaluation-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2px;
+        }
+        .evaluation-table th,
+        .evaluation-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .evaluation-table th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .evaluation-table td:first-child {
+            font-weight: 600;
+            color: var(--primary);
+            background: rgba(26, 58, 95, 0.02);
+            width: 30%;
+        }
+        .evaluation-table input,
+        .evaluation-table select,
+        .evaluation-table textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+        .evaluation-table input:focus,
+        .evaluation-table select:focus,
+        .evaluation-table textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 2px rgba(44, 90, 160, 0.1);
+        }
+        .evaluation-table textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        /* Layout de tablas lado a lado */
+        .tables-container {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .input-table-container {
+            flex: 0 0 50%;
+            width: 50%;
+        }
+        .results-table-container {
+            flex: 0 0 50%;
+            width: 50%;
+        }
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        .results-table th,
+        .results-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .results-table th {
+            background: var(--success);
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .results-table td:first-child {
+            font-weight: 600;
+            color: var(--primary);
+            background: rgba(42, 157, 143, 0.02);
+            width: 40%;
+        }
+        .results-table .value {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .results-table .positive {
+            color: var(--success);
+        }
+        .results-table .negative {
+            color: var(--accent);
+        }
+        @media (max-width: 768px) {
+            .tables-container {
+                flex-direction: column;
+            }
         }
         .project-link:hover {
             background: var(--primary);
@@ -424,6 +532,7 @@
             gap: 32px;
             margin-top: 24px;
             flex-wrap: wrap;
+            width: 100%;
         }
         .projects-sidebar {
             width: 200px;
@@ -514,13 +623,14 @@
             flex: 1;
             background: var(--light-card);
             border-radius: var(--radius);
-            padding: 32px;
+            padding: 8px 32px 32px 32px;
             box-shadow: var(--shadow-sm);
             border: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             gap: 24px;
             margin-left: 200px;
+            width: calc(100% - 200px);
         }
         .results {
             padding: 24px;
@@ -623,7 +733,7 @@
         }
         /* Gantt Chart */
         .gantt-container {
-            margin-top: 32px;
+            margin-top: 8px;
             background: var(--light-card);
             padding: 32px;
             border-radius: var(--radius);
@@ -716,10 +826,20 @@
         .gantt-today-line {
             position: absolute;
             top: 0;
-            width: 2px;
+            width: 3px;
             height: 100%;
-            background: var(--accent); /* Rojo para destacar */
+            background: var(--success);
             z-index: 5;
+            box-shadow: 0 0 4px rgba(42, 157, 143, 0.5);
+        }
+        .gantt-current-line {
+            position: absolute;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--accent);
+            z-index: 5;
+            box-shadow: 0 0 4px rgba(230, 57, 70, 0.5);
         }
         /* Contact Form */
         #contact-form {
@@ -854,7 +974,7 @@
         .control-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 24px 0;
+            margin: 8px 0;
             background: var(--light-card);
             border-radius: var(--radius);
             overflow: hidden;
@@ -942,25 +1062,148 @@
             border-color: var(--primary-light);
             box-shadow: 0 0 0 2px rgba(44, 90, 160, 0.1);
         }
-        .comments-cell textarea {
+        .comments-cell {
+            max-width: none;
+        }
+        .comments-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        .comments-history {
+            height: 60px;
+            overflow: hidden;
+            padding: 4px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-size: 12px;
+            flex: 1;
+            position: relative;
+        }
+        .comments-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .btn-nav-comment {
+            width: 16px;
+            height: 16px;
+            border: none;
+            background: var(--primary-light);
+            color: white;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-nav-comment:hover {
+            background: var(--primary);
+        }
+        .comment-item {
+            background: white;
+            padding: 6px 8px;
+            margin-bottom: 4px;
+            border-radius: 4px;
+            border-left: 3px solid var(--primary-light);
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .comment-date {
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .comment-text {
+            font-size: 12px;
+            line-height: 1.3;
+            cursor: pointer;
+            flex: 1;
+            padding-right: 20px;
+        }
+        .comment-text:hover {
+            background: #f0f8ff;
+        }
+        .comment-actions {
+            position: absolute;
+            top: 2px;
+            right: 4px;
+        }
+        .btn-delete-comment {
+            width: 16px;
+            height: 16px;
+            border: none;
+            background: var(--accent);
+            color: white;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-delete-comment:hover {
+            background: #b82b37;
+        }
+        .comment-edit-input {
             width: 100%;
-            min-height: 60px;
-            padding: 8px;
+            padding: 2px 4px;
+            border: 1px solid var(--primary-light);
+            border-radius: 2px;
+            font-size: 12px;
+            font-family: inherit;
+        }
+        .new-comment {
+            display: flex;
+            gap: 4px;
+            align-items: flex-start;
+        }
+        .new-comment textarea {
+            flex: 1;
+            min-height: 40px;
+            padding: 6px;
             border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 13px;
+            border-radius: 4px;
+            font-size: 12px;
             font-family: inherit;
             resize: vertical;
             background: white;
             transition: var(--transition);
         }
-        .comments-cell textarea:focus {
+        .new-comment textarea:focus {
             border-color: var(--primary-light);
             box-shadow: 0 0 0 2px rgba(44, 90, 160, 0.1);
         }
-        .comments-cell textarea::placeholder {
+        .new-comment textarea::placeholder {
             color: var(--text-secondary);
             font-style: italic;
+        }
+        .btn-add-comment {
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: var(--primary-light);
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        .btn-add-comment:hover {
+            background: var(--primary);
+            transform: scale(1.1);
         }
         /* Animations */
         @keyframes fadeInUp {
@@ -1165,81 +1408,115 @@
         <!-- PÁGINA DE EVALUACIÓN -->
         <div id="evaluacion" class="page">
             <div class="page-wrapper">
-                <div class="container">
-                    <h2 style="font-size: 24px; color: var(--primary); margin-bottom: 24px; text-align: center;"><i class="fas fa-calculator"></i> Evaluación de Proyectos</h2>
+                <div class="container-full">
                     <div class="evaluation-control-container">
                         <aside class="projects-sidebar">
                             <h3><i class="fas fa-folder"></i> Proyectos</h3>
                             <ul class="project-list" id="eval-project-list"></ul>
+                            <button class="btn btn-primary" style="margin-top: 20px; width: 100%;" onclick="addNewEvalProject()">
+                                <i class="fas fa-plus"></i> Nuevo
+                            </button>
                         </aside>
                         <div class="form-container">
-                            <form id="eval-form">
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label for="eval-name"><i class="fas fa-tag"></i> Nombre del Proyecto</label>
-                                        <input type="text" id="eval-name" placeholder="Nombre del proyecto" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="eval-location"><i class="fas fa-map-marker-alt"></i> Ubicación</label>
-                                        <input type="text" id="eval-location" placeholder="Ubicación del proyecto" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="eval-tech"><i class="fas fa-cogs"></i> Tecnología</label>
-                                        <select id="eval-tech" required>
-                                            <option value="">Selecciona una tecnología</option>
-                                            <option value="Solar">Solar Fotovoltaica</option>
-                                            <option value="Eólica">Eólica</option>
-                                            <option value="Hidroeléctrica">Hidroeléctrica</option>
-                                            <option value="Biomasa">Biomasa</option>
-                                            <option value="Geotérmica">Geotérmica</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="eval-capex"><i class="fas fa-dollar-sign"></i> Capex (mUSD)</label>
-                                        <input type="number" id="eval-capex" min="0" step="0.01" placeholder="Costo de inversión inicial" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="eval-opex"><i class="fas fa-chart-line"></i> Opex (mUSD/año)</label>
-                                        <input type="number" id="eval-opex" min="0" step="0.01" placeholder="Costos operativos anuales" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="eval-price"><i class="fas fa-bolt"></i> Precio Energía (USD/MWh)</label>
-                                        <input type="number" id="eval-price" min="0" step="0.01" placeholder="Precio de venta de energía" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="eval-period"><i class="fas fa-calendar-alt"></i> Plazo de Evaluación (años)</label>
-                                        <input type="number" id="eval-period" min="1" step="1" placeholder="Horizonte de evaluación" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="eval-discount"><i class="fas fa-percentage"></i> Tasa de Descuento (%)</label>
-                                        <input type="number" id="eval-discount" min="0" step="0.01" placeholder="Tasa de descuento" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="eval-production"><i class="fas fa-industry"></i> Producción Anual (MWh)</label>
-                                        <input type="number" id="eval-production" min="0" step="0.01" placeholder="Producción estimada anual" required>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                <h2 style="font-size: 24px; color: var(--primary); margin: 0;"><i class="fas fa-calculator"></i> Evaluación de Proyectos</h2>
+                                <div style="display: flex; gap: 16px;">
+                                    <button class="btn btn-primary" onclick="calculateEval()">
+                                        <i class="fas fa-calculator"></i> Evaluar
+                                    </button>
+                                    <button class="btn btn-success" onclick="saveEvalProject()">
+                                        <i class="fas fa-save"></i> Guardar
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="editEvalProject()">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                    <button class="btn btn-danger" onclick="deleteEvalProject()">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="tables-container">
+                                <div class="input-table-container">
+                                    <form id="eval-form">
+                                        <table class="evaluation-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Campo</th>
+                                                    <th>Características a Completar</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><i class="fas fa-tag"></i> Nombre</td>
+                                                    <td><input type="text" id="eval-name" placeholder="Nombre del proyecto" required></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fas fa-map-marker-alt"></i> Ubicación</td>
+                                                    <td><input type="text" id="eval-location" placeholder="Ubicación del proyecto" required></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fas fa-cogs"></i> Tecnología</td>
+                                                    <td>
+                                                        <select id="eval-tech" required>
+                                                            <option value="">Selecciona una tecnología</option>
+                                                            <option value="Solar">Solar Fotovoltaica</option>
+                                                            <option value="Eólica">Eólica</option>
+                                                            <option value="Hidroeléctrica">Hidroeléctrica</option>
+                                                            <option value="Biomasa">Biomasa</option>
+                                                            <option value="Geotérmica">Geotérmica</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fas fa-dollar-sign"></i> Capex (mUSD)</td>
+                                                    <td><input type="number" id="eval-capex" min="0" step="0.01" placeholder="Costo de inversión inicial" required></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fas fa-chart-line"></i> Opex (mUSD/año)</td>
+                                                    <td><input type="number" id="eval-opex" min="0" step="0.01" placeholder="Costos operativos anuales" required></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fas fa-bolt"></i> Precio Energía (USD/MWh)</td>
+                                                    <td><input type="number" id="eval-price" min="0" step="0.01" placeholder="Precio de venta de energía" required></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fas fa-calendar-alt"></i> Plazo de Evaluación (años)</td>
+                                                    <td><input type="number" id="eval-period" min="1" step="1" placeholder="Horizonte de evaluación" required></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fas fa-percentage"></i> Tasa de Descuento (%)</td>
+                                                    <td><input type="number" id="eval-discount" min="0" step="0.01" placeholder="Tasa de descuento" required></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><i class="fas fa-industry"></i> Producción Anual (MWh)</td>
+                                                    <td><input type="number" id="eval-production" min="0" step="0.01" placeholder="Producción estimada anual" required></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </form>
+                                </div>
+                                <div class="results-table-container">
+                                    <table class="results-table" id="eval-results-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Indicador Financiero</th>
+                                                <th>Resultado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="eval-results">
+                                            <tr>
+                                                <td colspan="2" style="text-align: center; color: var(--text-secondary); font-style: italic;">
+                                                    Completa el formulario y haz clic en "Evaluar" para ver los resultados
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="chart-container">
+                                        <canvas id="cashflow-chart"></canvas>
                                     </div>
                                 </div>
-                            </form>
-                            <div class="results" id="eval-results">
-                                <p>Completa el formulario y haz clic en "Evaluar" para ver los resultados.</p>
                             </div>
-                            <div class="chart-container">
-                                <canvas id="cashflow-chart"></canvas>
-                            </div>
-                            <div class="buttons">
-                                <button class="btn btn-primary" onclick="calculateEval()">
-                                    <i class="fas fa-calculator"></i> Evaluar
-                                </button>
-                                <button class="btn btn-success" onclick="saveEvalProject()">
-                                    <i class="fas fa-save"></i> Guardar
-                                </button>
-                                <button class="btn btn-secondary" onclick="editEvalProject()">
-                                    <i class="fas fa-edit"></i> Editar
-                                </button>
-                                <button class="btn btn-danger" onclick="deleteEvalProject()">
-                                    <i class="fas fa-trash"></i> Eliminar
-                                </button>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -1249,38 +1526,54 @@
         <!-- PÁGINA DE CONTROL -->
         <div id="control" class="page">
             <div class="page-wrapper">
-                <div class="container">
-                    <h2 style="font-size: 24px; color: var(--primary); margin-bottom: 24px; text-align: center;"><i class="fas fa-tasks"></i> Control de Proyectos</h2>
+                <div class="container-full">
                     <div class="evaluation-control-container">
                         <div class="projects-sidebar">
                             <h3><i class="fas fa-folder"></i> Proyectos</h3>
                             <ul class="project-list" id="control-project-list"></ul>
                             <button class="btn btn-primary" style="margin-top: 20px; width: 100%;" onclick="addNewControlProject()">
-                                <i class="fas fa-plus"></i> Nuevo Proyecto
+                                <i class="fas fa-plus"></i> Nuevo
                             </button>
                         </div>
                         <div class="form-container">
-                            <h3 style="margin-bottom: 24px; color: var(--primary); display: flex; align-items: center; gap: 10px;">
-                                <i class="fas fa-chart-bar"></i> Control de Avance
-                            </h3>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="control-project-name"><i class="fas fa-project-diagram"></i> Nombre del Proyecto</label>
-                                    <input type="text" id="control-project-name" placeholder="Nombre del proyecto" oninput="updateGanttChart()">
-                                </div>
-                                <div class="form-group">
-                                    <label for="control-start-date"><i class="fas fa-calendar-day"></i> Fecha de Inicio del Proyecto</label>
-                                    <input type="date" id="control-start-date" onchange="updateGanttChart()">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                                <h2 style="font-size: 24px; color: var(--primary); margin: 0;"><i class="fas fa-tasks"></i> Control de Proyectos</h2>
+                                <div style="display: flex; gap: 16px;">
+                                    <button class="btn btn-success" onclick="saveControlProject()">
+                                        <i class="fas fa-save"></i> Guardar Proyecto
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="editControlProject()">
+                                        <i class="fas fa-edit"></i> Editar Proyecto
+                                    </button>
+                                    <button class="btn btn-danger" onclick="deleteControlProject()">
+                                        <i class="fas fa-trash"></i> Eliminar Proyecto
+                                    </button>
                                 </div>
                             </div>
+                            <table class="evaluation-table" style="margin-bottom: 0;">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-project-diagram"></i> Nombre</th>
+                                        <th><i class="fas fa-calendar-day"></i> Fecha de Inicio</th>
+                                        <th><i class="fas fa-calendar-check"></i> Fecha Actual</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="text" id="control-project-name" placeholder="Nombre del proyecto" oninput="updateGanttChart()"></td>
+                                        <td><input type="date" id="control-start-date" onchange="updateGanttChart()"></td>
+                                        <td><input type="date" id="current-date" onchange="updateGanttChart()"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             <!-- --- INICIO: Nueva Tabla de Control --- -->
                             <table class="control-table">
                                 <thead>
                                     <tr>
-                                        <th style="width: 20%;">Hito</th>
-                                        <th style="width: 20%; text-align: center;">Fechas (Inicio/Fin)</th>
-                                        <th style="width: 25%; text-align: center;">Estado (%)</th>
-                                        <th style="width: 25%;">Comentarios</th>
+                                        <th style="width: 15%;">Hito</th>
+                                        <th style="width: 15%; text-align: center;">Fechas (Inicio/Fin)</th>
+                                        <th style="width: 15%; text-align: center;">Estado (%)</th>
+                                        <th style="width: 55%;">Comentarios</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1296,7 +1589,19 @@
                                         <td class="progress-cell">
                                             <input type="number" id="terreno-progress" min="0" max="100" value="0" oninput="updateProgress('terreno', this.value)">
                                         </td>
-                                        <td class="comments-cell"><textarea id="terreno-comments" placeholder="Añadir comentarios..."></textarea></td>
+                                        <td class="comments-cell">
+                                            <div class="comments-container">
+                                                <div class="comments-history" id="terreno-comments-history"></div>
+                                                <div class="comments-nav">
+                                                    <button class="btn-nav-comment" onclick="scrollComments('terreno', -1)">↑</button>
+                                                    <button class="btn-nav-comment" onclick="scrollComments('terreno', 1)">↓</button>
+                                                </div>
+                                            </div>
+                                            <div class="new-comment">
+                                                <textarea id="terreno-comments" placeholder="Añadir nuevo comentario..." rows="2"></textarea>
+                                                <button type="button" class="btn-add-comment" onclick="addComment('terreno')">+</button>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <!-- Conexión -->
                                     <tr>
@@ -1310,7 +1615,19 @@
                                         <td class="progress-cell">
                                             <input type="number" id="conexion-progress" min="0" max="100" value="0" oninput="updateProgress('conexion', this.value)">
                                         </td>
-                                        <td class="comments-cell"><textarea id="conexion-comments" placeholder="Añadir comentarios..."></textarea></td>
+                                        <td class="comments-cell">
+                                            <div class="comments-container">
+                                                <div class="comments-history" id="conexion-comments-history"></div>
+                                                <div class="comments-nav">
+                                                    <button class="btn-nav-comment" onclick="scrollComments('conexion', -1)">↑</button>
+                                                    <button class="btn-nav-comment" onclick="scrollComments('conexion', 1)">↓</button>
+                                                </div>
+                                            </div>
+                                            <div class="new-comment">
+                                                <textarea id="conexion-comments" placeholder="Añadir nuevo comentario..." rows="2"></textarea>
+                                                <button type="button" class="btn-add-comment" onclick="addComment('conexion')">+</button>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <!-- Línea -->
                                     <tr>
@@ -1324,7 +1641,19 @@
                                         <td class="progress-cell">
                                             <input type="number" id="linea-progress" min="0" max="100" value="0" oninput="updateProgress('linea', this.value)">
                                         </td>
-                                        <td class="comments-cell"><textarea id="linea-comments" placeholder="Añadir comentarios..."></textarea></td>
+                                        <td class="comments-cell">
+                                            <div class="comments-container">
+                                                <div class="comments-history" id="linea-comments-history"></div>
+                                                <div class="comments-nav">
+                                                    <button class="btn-nav-comment" onclick="scrollComments('linea', -1)">↑</button>
+                                                    <button class="btn-nav-comment" onclick="scrollComments('linea', 1)">↓</button>
+                                                </div>
+                                            </div>
+                                            <div class="new-comment">
+                                                <textarea id="linea-comments" placeholder="Añadir nuevo comentario..." rows="2"></textarea>
+                                                <button type="button" class="btn-add-comment" onclick="addComment('linea')">+</button>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <!-- Permiso Ambiental -->
                                     <tr>
@@ -1338,7 +1667,19 @@
                                         <td class="progress-cell">
                                             <input type="number" id="permiso-progress" min="0" max="100" value="0" oninput="updateProgress('permiso', this.value)">
                                         </td>
-                                        <td class="comments-cell"><textarea id="permiso-comments" placeholder="Añadir comentarios..."></textarea></td>
+                                        <td class="comments-cell">
+                                            <div class="comments-container">
+                                                <div class="comments-history" id="permiso-comments-history"></div>
+                                                <div class="comments-nav">
+                                                    <button class="btn-nav-comment" onclick="scrollComments('permiso', -1)">↑</button>
+                                                    <button class="btn-nav-comment" onclick="scrollComments('permiso', 1)">↓</button>
+                                                </div>
+                                            </div>
+                                            <div class="new-comment">
+                                                <textarea id="permiso-comments" placeholder="Añadir nuevo comentario..." rows="2"></textarea>
+                                                <button type="button" class="btn-add-comment" onclick="addComment('permiso')">+</button>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <!-- Comunidades -->
                                     <tr>
@@ -1352,7 +1693,19 @@
                                         <td class="progress-cell">
                                             <input type="number" id="comunidades-progress" min="0" max="100" value="0" oninput="updateProgress('comunidades', this.value)">
                                         </td>
-                                        <td class="comments-cell"><textarea id="comunidades-comments" placeholder="Añadir comentarios..."></textarea></td>
+                                        <td class="comments-cell">
+                                            <div class="comments-container">
+                                                <div class="comments-history" id="comunidades-comments-history"></div>
+                                                <div class="comments-nav">
+                                                    <button class="btn-nav-comment" onclick="scrollComments('comunidades', -1)">↑</button>
+                                                    <button class="btn-nav-comment" onclick="scrollComments('comunidades', 1)">↓</button>
+                                                </div>
+                                            </div>
+                                            <div class="new-comment">
+                                                <textarea id="comunidades-comments" placeholder="Añadir nuevo comentario..." rows="2"></textarea>
+                                                <button type="button" class="btn-add-comment" onclick="addComment('comunidades')">+</button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -1365,17 +1718,7 @@
                                     <div class="gantt-chart" id="gantt-chart"></div>
                                 </div>
                             </div>
-                            <div class="buttons">
-                                <button class="btn btn-success" onclick="saveControlProject()">
-                                    <i class="fas fa-save"></i> Guardar Proyecto
-                                </button>
-                                <button class="btn btn-secondary" onclick="editControlProject()">
-                                    <i class="fas fa-edit"></i> Editar Proyecto
-                                </button>
-                                <button class="btn btn-danger" onclick="deleteControlProject()">
-                                    <i class="fas fa-trash"></i> Eliminar Proyecto
-                                </button>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -1430,7 +1773,7 @@
                 if (pageId === 'evaluacion') {
                     loadEvalProjects();
                     document.getElementById('eval-form')?.reset();
-                    document.getElementById('eval-results').innerHTML = '<p>Completa el formulario y haz clic en "Evaluar" para ver los resultados.</p>';
+                    document.getElementById('eval-results').innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--text-secondary); font-style: italic;">Completa el formulario y haz clic en "Evaluar" para ver los resultados</td></tr>';
                     if (cashflowChart) {
                         cashflowChart.destroy();
                         cashflowChart = null;
@@ -1485,7 +1828,7 @@
                 document.getElementById('eval-period').value = project.period || '';
                 document.getElementById('eval-discount').value = project.discount || '';
                 document.getElementById('eval-production').value = project.production || '';
-                document.getElementById('eval-results').innerHTML = '<p>Proyecto cargado. Haz clic en "Evaluar" para ver los resultados actualizados.</p>';
+                document.getElementById('eval-results').innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--text-secondary); font-style: italic;">Proyecto cargado. Haz clic en "Evaluar" para ver los resultados actualizados</td></tr>';
                 if (cashflowChart) {
                     cashflowChart.destroy();
                     cashflowChart = null;
@@ -1550,10 +1893,20 @@
                 const results = document.getElementById('eval-results');
                 if (!results) throw new Error('Results element not found');
                 const irr = calculateIRR(cashflows);
+                const payback = calculatePayback(cashflows);
                 results.innerHTML = `
-                    <p><strong>Valor Presente Neto (VPN):</strong> <span style="color: ${npv >= 0 ? 'var(--success)' : 'var(--accent)'}; font-weight: 600;">${npv.toFixed(2)} mUSD</span></p>
-                    <p><strong>Tasa Interna de Retorno (TIR):</strong> <span style="color: ${irr >= (discount * 100) ? 'var(--success)' : 'var(--accent)'}; font-weight: 600;">${irr.toFixed(2)} %</span></p>
-                    <p><strong>Payback:</strong> ${calculatePayback(cashflows)} años</p>
+                    <tr>
+                        <td><i class="fas fa-dollar-sign"></i> Valor Presente Neto (VPN)</td>
+                        <td class="value ${npv >= 0 ? 'positive' : 'negative'}">${npv.toFixed(2)} mUSD</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-percentage"></i> Tasa Interna de Retorno (TIR)</td>
+                        <td class="value ${irr >= (discount * 100) ? 'positive' : 'negative'}">${irr.toFixed(2)} %</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-clock"></i> Período de Recuperación</td>
+                        <td class="value">${payback} años</td>
+                    </tr>
                 `;
                 if (!window.Chart) throw new Error('Chart.js not loaded');
                 const canvas = document.getElementById('cashflow-chart');
@@ -1565,7 +1918,7 @@
                 cashflowChart = new Chart(canvas, {
                     type: 'line',
                     data: {
-                        labels: Array.from({length: period + 1}, (_, i) => `Año ${i}`),
+                        labels: Array.from({length: period + 1}, (_, i) => i),
                         datasets: [{
                             label: 'Flujo de Caja (mUSD)',
                             data: cashflows,
@@ -1784,7 +2137,22 @@
                 document.getElementById('terreno-progress').value = project.terreno?.progress || '0';
                 document.getElementById('terreno-start').value = project.terreno?.start || '';
                 document.getElementById('terreno-end').value = project.terreno?.end || '';
-                document.getElementById('terreno-comments').value = project.terreno?.comments || '';
+                
+                // Cargar historial de comentarios
+                const terrenoHistory = document.getElementById('terreno-comments-history');
+                terrenoHistory.innerHTML = '';
+                if (project.terreno?.commentsHistory) {
+                    project.terreno.commentsHistory.forEach(comment => {
+                        const commentDiv = document.createElement('div');
+                        commentDiv.className = 'comment-item';
+                        commentDiv.innerHTML = `
+                            <div class="comment-date">${comment.date}</div>
+                            <div class="comment-text">${comment.text}</div>
+                        `;
+                        terrenoHistory.appendChild(commentDiv);
+                    });
+                }
+                document.getElementById('terreno-comments').value = '';
                 document.getElementById('conexion-progress').value = project.conexion?.progress || '0';
                 document.getElementById('conexion-start').value = project.conexion?.start || '';
                 document.getElementById('conexion-end').value = project.conexion?.end || '';
@@ -1806,6 +2174,7 @@
                     const value = document.getElementById(`${id}-progress`).value;
                     bar.style.width = `${value || 0}%`;
                 });
+
                 updateGanttChart();
             } catch (e) {
                 console.error('Error selecting control project:', e);
@@ -1944,7 +2313,7 @@
                     taskElement.style.top = `${index * 40 + 10}px`;
                     // --- MEJORA 1: Tooltip Enriquecido ---
                     const durationDays = Math.ceil((task.end - task.start) / (1000 * 60 * 60 * 24));
-                    taskElement.title = `${task.name}\nInicio: ${task.start.toLocaleDateString('es-ES')}\nTérmino: ${task.end.toLocaleDateString('es-ES')}\nDuración: ${durationDays} días\nProgreso: ${task.progress}%`;
+                    taskElement.title = `${task.name}\nInicio: ${task.start.toLocaleDateString('es-ES', {day: '2-digit', month: '2-digit', year: '2-digit'}).replace(/\//g, '-')}\nTérmino: ${task.end.toLocaleDateString('es-ES', {day: '2-digit', month: '2-digit', year: '2-digit'}).replace(/\//g, '-')}\nDuración: ${durationDays} días\nProgreso: ${task.progress}%`;
                     // --- MEJORA 6: Interactividad de Selección ---
                     taskElement.onclick = () => {
                         document.querySelectorAll('.gantt-item').forEach(item => item.classList.remove('active'));
@@ -1998,8 +2367,19 @@
                     const todayLine = document.createElement('div');
                     todayLine.className = 'gantt-today-line';
                     todayLine.style.left = `${daysFromStartToday * dayWidth}px`;
-                    todayLine.title = `Hoy: ${today.toLocaleDateString('es-ES')}`;
+                    todayLine.title = `Hoy: ${today.toLocaleDateString('es-ES', {day: '2-digit', month: '2-digit', year: '2-digit'}).replace(/\//g, '-')}`;
                     ganttChart.appendChild(todayLine);
+                }
+                
+                // --- Línea de Fecha Actual del Proyecto ---
+                const currentDate = document.getElementById('current-date').valueAsDate;
+                if (currentDate && currentDate >= startDateAdjusted && currentDate <= endDateAdjusted) {
+                    const daysFromStartCurrent = Math.ceil((currentDate - startDateAdjusted) / (1000 * 60 * 60 * 24));
+                    const currentLine = document.createElement('div');
+                    currentLine.className = 'gantt-current-line';
+                    currentLine.style.left = `${daysFromStartCurrent * dayWidth}px`;
+                    currentLine.title = `Fecha Actual del Proyecto: ${currentDate.toLocaleDateString('es-ES', {day: '2-digit', month: '2-digit', year: '2-digit'}).replace(/\//g, '-')}`;
+                    ganttChart.appendChild(currentLine);
                 }
             } catch (e) {
                 console.error('Error drawing Gantt chart:', e);
@@ -2016,6 +2396,127 @@
                 'Total': 'fa-chart-line'
             };
             return icons[taskName] || 'fa-tasks';
+        }
+        
+        let commentScrollPositions = {};
+        
+        function addComment(milestone) {
+            try {
+                const textarea = document.getElementById(`${milestone}-comments`);
+                const text = textarea.value.trim();
+                if (!text) return;
+                
+                const historyDiv = document.getElementById(`${milestone}-comments-history`);
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('es-ES', {day: '2-digit', month: '2-digit', year: '2-digit'}).replace(/\//g, '-');
+                
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'comment-item';
+                commentDiv.innerHTML = `
+                    <div class="comment-date">${dateStr}</div>
+                    <div class="comment-text" onclick="editComment(this)">${text}</div>
+                    <div class="comment-actions">
+                        <button onclick="deleteComment(this.parentElement)" class="btn-delete-comment">×</button>
+                    </div>
+                `;
+                
+                historyDiv.appendChild(commentDiv);
+                textarea.value = '';
+                
+                if (!commentScrollPositions[milestone]) commentScrollPositions[milestone] = 0;
+                const comments = historyDiv.children;
+                if (comments.length > 0) {
+                    commentScrollPositions[milestone] = comments.length - 1;
+                    showComment(milestone, commentScrollPositions[milestone]);
+                }
+            } catch (e) {
+                console.error('Error adding comment:', e);
+            }
+        }
+        
+        function scrollComments(milestone, direction) {
+            const historyDiv = document.getElementById(`${milestone}-comments-history`);
+            const comments = historyDiv.children;
+            if (comments.length === 0) return;
+            
+            if (!commentScrollPositions[milestone]) commentScrollPositions[milestone] = comments.length - 1;
+            
+            commentScrollPositions[milestone] += direction;
+            if (commentScrollPositions[milestone] < 0) commentScrollPositions[milestone] = comments.length - 1;
+            if (commentScrollPositions[milestone] >= comments.length) commentScrollPositions[milestone] = 0;
+            
+            showComment(milestone, commentScrollPositions[milestone]);
+        }
+        
+        function showComment(milestone, index) {
+            const historyDiv = document.getElementById(`${milestone}-comments-history`);
+            const comments = historyDiv.children;
+            
+            for (let i = 0; i < comments.length; i++) {
+                comments[i].style.display = i === index ? 'block' : 'none';
+            }
+        }
+        
+        function editComment(textElement) {
+            const currentText = textElement.textContent;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentText;
+            input.className = 'comment-edit-input';
+            input.onblur = () => {
+                textElement.textContent = input.value || currentText;
+                textElement.style.display = 'block';
+                input.remove();
+            };
+            input.onkeypress = (e) => {
+                if (e.key === 'Enter') input.blur();
+            };
+            textElement.style.display = 'none';
+            textElement.parentElement.insertBefore(input, textElement.nextSibling);
+            input.focus();
+        }
+        
+        function deleteComment(commentElement) {
+            if (confirm('¿Eliminar este comentario?')) {
+                commentElement.remove();
+            }
+        }
+        
+
+        function addNewEvalProject() {
+            try {
+                const list = document.getElementById('eval-project-list');
+                const newProject = {
+                    id: Date.now(),
+                    name: `Nuevo Proyecto ${list.children.length + 1}`,
+                    location: '',
+                    tech: '',
+                    capex: '',
+                    opex: '',
+                    price: '',
+                    period: '',
+                    discount: '',
+                    production: ''
+                };
+                const projects = JSON.parse(safeStorage.getItem('evalProjects') || '[]');
+                projects.push(newProject);
+                safeStorage.setItem('evalProjects', JSON.stringify(projects));
+                loadEvalProjects();
+                selectEvalProject(newProject);
+                const formContainer = document.querySelector('.form-container');
+                const successMsg = document.createElement('div');
+                successMsg.className = 'success-message';
+                successMsg.innerHTML = '<i class="fas fa-check-circle"></i> Nuevo proyecto creado. Completa los datos y guarda.';
+                formContainer.prepend(successMsg);
+                setTimeout(() => {
+                    if (successMsg.parentNode) {
+                        successMsg.remove();
+                    }
+                }, 5000);
+            } catch (e) {
+                console.error('Error adding new eval project:', e);
+                alert('Error al añadir nuevo proyecto');
+            }
         }
         function addNewControlProject() {
             try {
@@ -2176,6 +2677,7 @@
             document.addEventListener('DOMContentLoaded', () => {
                 const today = new Date().toISOString().split('T')[0];
                 document.getElementById('control-start-date').value = today;
+                document.getElementById('current-date').value = today;
                 loadEvalProjects();
                 loadControlProjects();
                 updateGanttChart();
