@@ -1489,6 +1489,14 @@
                                 <i class="fas fa-chart-line"></i> Control Proyecto
                             </a>
                         </div>
+                        <div style="margin-top: 30px; text-align: center;">
+                            <button onclick="testSupabaseConnection()" class="btn btn-secondary" style="margin-right: 10px;">
+                                <i class="fas fa-database"></i> Probar Supabase
+                            </button>
+                            <button onclick="showSupabaseData()" class="btn btn-secondary">
+                                <i class="fas fa-eye"></i> Ver Datos
+                            </button>
+                        </div>
                     </div>
                 </section>
                 <section class="quote">
@@ -2000,48 +2008,49 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFqZm1yY2d0cGtlcG5odnplcW1mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5Njk0NDUsImV4cCI6MjA3MzU0NTQ0NX0.4n7YSN2IeFG9ElEqFO6C-Bhq7Ss3Gk5spUODR5ZKQHM';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Inicializar base de datos con creación automática
+        // Inicializar base de datos
         async function initDatabase() {
             try {
-                // Intentar insertar un registro de prueba para forzar la creación de tablas
-                const testProject = {
-                    name: '_test_project_delete_me',
-                    location: 'test',
-                    tech: 'test',
-                    capex: 0,
-                    opex: 0,
-                    price: 0,
-                    period: 1,
-                    discount: 0,
-                    production: 0
-                };
+                console.log('Verificando conexión a Supabase...');
                 
-                // Si la tabla no existe, Supabase la creará automáticamente
-                const { data, error } = await supabase
+                // Verificar tabla eval_projects
+                const { data: evalData, error: evalError } = await supabase
                     .from('eval_projects')
-                    .insert([testProject])
-                    .select();
+                    .select('id')
+                    .limit(1);
                 
-                if (!error && data) {
-                    // Eliminar el proyecto de prueba
-                    await supabase
-                        .from('eval_projects')
-                        .delete()
-                        .eq('name', '_test_project_delete_me');
+                // Verificar tabla control_projects
+                const { data: controlData, error: controlError } = await supabase
+                    .from('control_projects')
+                    .select('id')
+                    .limit(1);
+                
+                if (evalError || controlError) {
+                    console.error('Errores de tabla:', { evalError, controlError });
+                    showNotification('Tablas no encontradas - Creando automáticamente...', 'warning');
                     
-                    showNotification('Tablas creadas y verificadas en Supabase', 'success');
+                    // Intentar crear tablas automáticamente
+                    try {
+                        await supabase.rpc('create_tables_if_not_exist');
+                        showNotification('Tablas creadas exitosamente', 'success');
+                    } catch (createError) {
+                        console.error('No se pueden crear tablas automáticamente:', createError);
+                        
+                        const sqlCommands = `-- Ejecuta en el Editor SQL de Supabase:\nCREATE TABLE eval_projects (id SERIAL PRIMARY KEY, name TEXT NOT NULL, location TEXT, tech TEXT, capex DECIMAL, opex DECIMAL, price DECIMAL, period INTEGER, discount DECIMAL, production DECIMAL, created_at TIMESTAMP DEFAULT NOW());\nCREATE TABLE control_projects (id SERIAL PRIMARY KEY, name TEXT NOT NULL, controls JSONB, created_at TIMESTAMP DEFAULT NOW());`;
+                        
+                        console.log('SQL necesario:', sqlCommands);
+                        alert('CREAR TABLAS MANUALMENTE:\n\n1. Ve a Supabase Dashboard\n2. Editor SQL\n3. Ejecuta:\n\n' + sqlCommands);
+                    }
+                    
+                    showNotification('Usando localStorage mientras tanto', 'info');
                 } else {
-                    throw error;
-                }
-            } catch (error) {
-                console.log('Error con Supabase:', error);
-                // Verificar si las tablas existen
-                try {
-                    const { data } = await supabase.from('eval_projects').select('id').limit(1);
+                    console.log('Tablas verificadas exitosamente');
                     showNotification('Conectado a Supabase exitosamente', 'success');
-                } catch (verifyError) {
-                    showNotification('Usando almacenamiento local', 'info');
                 }
+                
+            } catch (error) {
+                console.error('Error de conexión completo:', error);
+                showNotification('Error de conexión - Usando almacenamiento local', 'warning');
             }
         }
 
@@ -2752,22 +2761,22 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 let projects = [];
                 
-                // Intentar cargar desde Supabase primero
+                // Cargar desde Supabase automáticamente
                 try {
                     const { data, error } = await supabase
                         .from('eval_projects')
                         .select('*')
                         .order('created_at', { ascending: false });
                     
-                    if (!error) {
-                        projects = data || [];
+                    if (!error && data) {
+                        projects = data;
+                        // Sincronizar con localStorage
+                        safeStorage.setItem('evalProjects', JSON.stringify(projects));
+                    } else {
+                        throw error;
                     }
                 } catch (supabaseError) {
-                    console.log('Supabase no disponible, usando localStorage');
-                }
-                
-                // Si Supabase falla, usar localStorage
-                if (projects.length === 0) {
+                    // Usar localStorage como respaldo
                     projects = JSON.parse(safeStorage.getItem('evalProjects') || '[]');
                 }
 
@@ -3037,7 +3046,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!validateEvalForm()) return;
             try {
                 const projectData = {
-                    id: currentEvalProject || Date.now(),
                     name: document.getElementById('eval-name').value,
                     location: document.getElementById('eval-location').value,
                     tech: document.getElementById('eval-tech').value,
@@ -3049,37 +3057,60 @@ document.addEventListener('DOMContentLoaded', function() {
                     production: parseFloat(document.getElementById('eval-production').value)
                 };
 
-                // Intentar guardar en Supabase
+                console.log('Intentando guardar proyecto:', projectData);
+
+                // Guardar automáticamente en Supabase
                 try {
-                    const { data, error } = await supabase
-                        .from('eval_projects')
-                        .insert([projectData]);
+                    let result;
+                    if (currentEvalProject && currentEvalProject !== 'Ejemplo') {
+                        // Actualizar proyecto existente
+                        console.log('Actualizando proyecto existente ID:', currentEvalProject);
+                        result = await supabase
+                            .from('eval_projects')
+                            .update(projectData)
+                            .eq('id', currentEvalProject)
+                            .select();
+                    } else {
+                        // Crear nuevo proyecto
+                        console.log('Creando nuevo proyecto');
+                        result = await supabase
+                            .from('eval_projects')
+                            .insert([projectData])
+                            .select();
+                    }
                     
-                    if (!error) {
-                        showNotification('Proyecto guardado en Supabase.', 'success');
+                    console.log('Resultado Supabase:', result);
+                    
+                    if (!result.error && result.data) {
+                        showNotification('Proyecto guardado en Supabase exitosamente', 'success');
+                        if (result.data.length > 0) {
+                            currentEvalProject = result.data[0].id;
+                        }
+                        // Recargar desde Supabase
+                        await loadEvalProjects();
+                    } else {
+                        console.error('Error de Supabase:', result.error);
+                        throw result.error;
                     }
                 } catch (supabaseError) {
-                    console.log('Supabase no disponible, guardando en localStorage');
+                    console.error('Error Supabase:', supabaseError);
+                    // Respaldo en localStorage
+                    const projects = JSON.parse(safeStorage.getItem('evalProjects') || '[]');
+                    const index = projects.findIndex(p => p.id === currentEvalProject);
+                    if (index > -1) {
+                        projects[index] = { ...projectData, id: currentEvalProject };
+                    } else {
+                        const newId = Date.now();
+                        projects.push({ ...projectData, id: newId });
+                        currentEvalProject = newId;
+                    }
+                    safeStorage.setItem('evalProjects', JSON.stringify(projects));
+                    showNotification('Guardado en localStorage (Supabase no disponible)', 'warning');
+                    loadEvalProjects();
                 }
                 
-                // Siempre guardar en localStorage como respaldo
-                const projects = JSON.parse(safeStorage.getItem('evalProjects') || '[]');
-                const index = projects.findIndex(p => p.id === currentEvalProject);
-                if (index > -1) {
-                    projects[index] = projectData;
-                } else {
-                    projects.push(projectData);
-                }
-                safeStorage.setItem('evalProjects', JSON.stringify(projects));
-                
-                showNotification('Proyecto guardado exitosamente.', 'success');
-                loadEvalProjects();
-                document.getElementById('eval-form').reset();
-                if (cashflowChart) {
-                    cashflowChart.destroy();
-                    cashflowChart = null;
-                }
-                currentEvalProject = null;
+                // No limpiar el formulario para mantener los datos visibles
+                showNotification('Proyecto guardado exitosamente', 'success');
             } catch (e) {
                 console.error('Error saving eval project:', e);
                 showNotification('Error al guardar el proyecto.', 'error');
@@ -3118,9 +3149,32 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         // Control Functions
-        function loadControlProjects() {
+        async function loadControlProjects() {
             try {
-                const projects = JSON.parse(safeStorage.getItem('controlProjects') || '[]');
+                let projects = [];
+                
+                // Cargar desde Supabase automáticamente
+                try {
+                    const { data, error } = await supabase
+                        .from('control_projects')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+                    
+                    if (!error && data) {
+                        projects = data;
+                        // Sincronizar con localStorage
+                        safeStorage.setItem('controlProjects', JSON.stringify(projects));
+                        console.log('Proyectos de control cargados desde Supabase:', projects.length);
+                    } else {
+                        throw error;
+                    }
+                } catch (supabaseError) {
+                    console.error('Error cargando desde Supabase:', supabaseError);
+                    // Usar localStorage como respaldo
+                    projects = JSON.parse(safeStorage.getItem('controlProjects') || '[]');
+                    console.log('Usando localStorage como respaldo:', projects.length);
+                }
+
                 const list = document.getElementById('control-project-list');
                 if (!list) throw new Error('Control project list not found');
                 list.innerHTML = '';
@@ -4156,7 +4210,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             return comments;
         }
-        function saveControlProject() {
+        async function saveControlProject() {
             if (!validateControlForm()) return;
             try {
                 const projects = JSON.parse(safeStorage.getItem('controlProjects') || '[]');
@@ -4226,9 +4280,38 @@ document.addEventListener('DOMContentLoaded', function() {
                     project.controls.push(controlData);
                 }
                 
+                // Guardar en Supabase
+                try {
+                    const { data: existingProjects, error: searchError } = await supabase
+                        .from('control_projects')
+                        .select('*')
+                        .eq('name', name);
+                    
+                    let supabaseProject = existingProjects && existingProjects[0];
+                    
+                    if (supabaseProject) {
+                        const { error: updateError } = await supabase
+                            .from('control_projects')
+                            .update({ controls: project.controls })
+                            .eq('id', supabaseProject.id);
+                        
+                        if (updateError) throw updateError;
+                    } else {
+                        const { error: insertError } = await supabase
+                            .from('control_projects')
+                            .insert([{ name, controls: project.controls }]);
+                        
+                        if (insertError) throw insertError;
+                    }
+                    
+                    showNotification('Control guardado en Supabase', 'success');
+                } catch (supabaseError) {
+                    console.error('Error Supabase:', supabaseError);
+                    showNotification('Guardado local (Supabase falló)', 'warning');
+                }
+                
                 safeStorage.setItem('controlProjects', JSON.stringify(projects));
                 loadControlProjects();
-                showNotification('Control guardado exitosamente.', 'success');
                 updateGanttChart();
             } catch (e) {
                 console.error('Error saving control project:', e);
@@ -4322,6 +4405,101 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error setting event listeners:', e);
             showNotification('Error al inicializar los eventos.', 'error');
         }
+        // Funciones de prueba para Supabase
+        async function testSupabaseConnection() {
+            try {
+                showNotification('Probando conexión a Supabase...', 'info');
+                
+                // Probar inserción en eval_projects
+                const testEvalData = {
+                    name: 'Proyecto de Prueba ' + Date.now(),
+                    location: 'Ubicación de Prueba',
+                    tech: 'Solar',
+                    capex: 1.0,
+                    opex: 0.1,
+                    price: 50,
+                    period: 10,
+                    discount: 8,
+                    production: 1000
+                };
+                
+                console.log('Insertando datos de prueba:', testEvalData);
+                const { data: evalResult, error: evalError } = await supabase
+                    .from('eval_projects')
+                    .insert([testEvalData])
+                    .select();
+                
+                if (evalError) {
+                    console.error('Error insertando evaluación:', evalError);
+                    throw evalError;
+                }
+                
+                console.log('Evaluación insertada:', evalResult);
+                
+                // Probar inserción en control_projects
+                const testControlData = {
+                    name: 'Control de Prueba ' + Date.now(),
+                    controls: [{
+                        controlDate: '2025-01-15',
+                        terreno: { progress: 50, start: '2025-01-01', end: '2025-02-01' }
+                    }]
+                };
+                
+                console.log('Insertando control de prueba:', testControlData);
+                const { data: controlResult, error: controlError } = await supabase
+                    .from('control_projects')
+                    .insert([testControlData])
+                    .select();
+                
+                if (controlError) {
+                    console.error('Error insertando control:', controlError);
+                    throw controlError;
+                }
+                
+                console.log('Control insertado:', controlResult);
+                showNotification('Conexión a Supabase exitosa - Datos de prueba insertados', 'success');
+                
+            } catch (error) {
+                console.error('Error en prueba de Supabase:', error);
+                showNotification('Error en Supabase: ' + error.message, 'error');
+            }
+        }
+        
+        async function showSupabaseData() {
+            try {
+                showNotification('Consultando datos de Supabase...', 'info');
+                
+                // Consultar eval_projects
+                const { data: evalData, error: evalError } = await supabase
+                    .from('eval_projects')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+                
+                // Consultar control_projects
+                const { data: controlData, error: controlError } = await supabase
+                    .from('control_projects')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+                
+                console.log('Datos de evaluación:', evalData);
+                console.log('Datos de control:', controlData);
+                
+                const evalCount = evalData ? evalData.length : 0;
+                const controlCount = controlData ? controlData.length : 0;
+                
+                showNotification(`Datos encontrados: ${evalCount} evaluaciones, ${controlCount} controles`, 'success');
+                
+                if (evalError) console.error('Error eval:', evalError);
+                if (controlError) console.error('Error control:', controlError);
+                
+            } catch (error) {
+                console.error('Error consultando datos:', error);
+                showNotification('Error consultando datos: ' + error.message, 'error');
+            }
+        }
+
         // Inicializar la aplicación con login
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('login-form').addEventListener('submit', function(e) {
